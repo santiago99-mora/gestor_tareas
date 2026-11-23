@@ -1,16 +1,28 @@
 {
   "expo": {
-    "name": "Gestor de tareas · Taller",
-    "slug": "gestor-tareas-taller",
+    "name": "Gestor de Tareas",
+    "slug": "gestor-tareas",
     "scheme": "gestortareas",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#172743"
+    },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-secure-store"
     ],
     "android": {
-      "package": "com.instituto.gestortareastaller"
+      "package": "com.santiagomora.gestortareas",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#172743"
+      }
     },
     "ios": {
       "supportsTablet": true

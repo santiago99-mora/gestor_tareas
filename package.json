@@ -9,7 +9,7 @@
     "android": "expo start --android",
     "test": "jest --runInBand",
     "test:watch": "jest --watch",
-    "doctor": "expo-doctor",
+    "doctor": "npx expo-doctor",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "expo-constants": "~57.0.0",
     "expo-linking": "~57.0.13",
     "expo-router": "~57.0.29",
+    "expo-secure-store": "~57.0.4",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
     "react-native": "0.86.3",
@@ -40,6 +41,8 @@
     ]
   },
   "overrides": {
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-native-reanimated": "4.5.1",
+    "react-native-worklets": "0.10.1"
   }
 }

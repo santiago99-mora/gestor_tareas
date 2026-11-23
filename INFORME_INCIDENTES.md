@@ -90,11 +90,12 @@ Se ejecutó la línea base del proyecto (`npm run typecheck` con 0 errores y `np
 | Error de servicio | Dispara `HTTP 503` y banner rojo, pero `loading` queda en `true` y oculta la lista. | `setLoading(false)` movido a `finally` en `loadTasks` con control `latestRequestId`. | Captura LogBox Android `Log 2 of 2` + `TaskManagerScreen.test.tsx` y `taskService.test.ts` PASS. |
 
 ## Conclusión y control de cambios
-- **Commits preliminares registrados:** `73ec2d9` (línea base inicial) · `890aaed` (alineación de dependencias SDK 57) · `022bbbe` (corrección de filtros y validaciones).
-- **Commit final (hash):** *Completar con el hash luego de subir el commit de cierre de Etapa 1.*
-- **Mensaje del commit:** *Completar con el mensaje del commit de cierre de Etapa 1.*
-- **Qué aprendí y cómo lo aplicaría a mi app final:** Diferenciar síntoma de causa raíz antes de editar código (por ejemplo: mutación de estado vs. dependencias faltantes en `useMemo`, `finally` en promesas que pueden fallar, e importancia de claves estables por `id` en `FlatList`). En la integración final con backend real (`smora`) aplicaré el mismo manejo explícito de carga/error con `finally`, cancelación de solicitudes y pruebas automatizadas de regresión desde el inicio.
+- **Commits de Etapa 1 registrados:** `73ec2d9` (línea base inicial) · `890aaed` (deps SDK 57) · `022bbbe` (filtros/validaciones) · `e193cf8` (`app/index.tsx`) · `a07302d` (tests e informe).
+- **Evolución Etapa 2 (Proyecto Integrador):** se añadió `expo-secure-store`, `AuthContext` con rutas protegidas y manejo de `401`, cliente REST conectado a `smora` (`HTTPS` + mock contractual), 6 pantallas en Expo Router (`login`, `register`, tablero, `new`, `task/[id]`, `profile`), mejoras de accesibilidad, configuración `eas.json` (`preview` → `apk`), documentación para ClickUp (`README.md`, `docs/`) y ampliación a **8 suites / 26 pruebas aprobadas**.
+- **Commit final (hash):** *Completar con el hash del commit etiquetado de entrega final (ej. `v1.0.0`).*
+- **Mensaje del commit:** *Completar con el mensaje del commit final.*
+- **Qué aprendí y cómo lo aplicaría a mi app final:** Diferenciar síntoma de causa raíz antes de editar código (mutación de estado, dependencias faltantes en `useMemo`, `finally` en promesas que pueden fallar y claves estables por `id` en `FlatList`). En la integración real con `smora` se aplicó el mismo patrón con `AbortController`, clasificación de errores (`network`, `timeout`, `401`, `5xx`), almacenamiento seguro del JWT en `expo-secure-store` y pruebas unitarias/de componentes desde el primer hito.
 
 ## Transparencia de uso de asistentes de IA (EDI 2026)
 - **Asistente utilizado:** Antigravity (agente de programación).
-- **Tipo de consultas realizadas:** análisis del plan del EDI 2026, guía paso a paso para inicialización de Git, resolución de conflictos de dependencias (`ERESOLVE`) en Expo SDK 57, diagnóstico de las 6 incidencias de `src/utils/` y `app/index.tsx`, redacción guiada de pruebas de regresión en Jest/RNTL y estructuración del informe técnico.
+- **Tipo de consultas realizadas:** análisis del plan del EDI 2026, guía paso a paso para Git, resolución de conflictos de dependencias (`ERESOLVE`) en Expo SDK 57 (`react-native`, `react-test-renderer`, `react-dom`, `react-native-reanimated`), diagnóstico de las 6 incidencias originales, implementación guiada del backend `smora` con JWT/SQLAlchemy, diseño de la capa `AuthContext` + `apiClient` + pantallas en Expo Router, redacción de pruebas Jest/RNTL y documentación técnica del repositorio.
