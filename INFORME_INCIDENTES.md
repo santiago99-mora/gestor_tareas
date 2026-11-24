@@ -91,9 +91,9 @@ Se ejecutó la línea base del proyecto (`npm run typecheck` con 0 errores y `np
 
 ## Conclusión y control de cambios
 - **Commits de Etapa 1 registrados:** `73ec2d9` (línea base inicial) · `890aaed` (deps SDK 57) · `022bbbe` (filtros/validaciones) · `e193cf8` (`app/index.tsx`) · `a07302d` (tests e informe).
-- **Evolución Etapa 2 (Proyecto Integrador):** se añadió `expo-secure-store`, `AuthContext` con rutas protegidas y manejo de `401`, cliente REST conectado a `smora` (`HTTPS` + mock contractual), 6 pantallas en Expo Router (`login`, `register`, tablero, `new`, `task/[id]`, `profile`), mejoras de accesibilidad, configuración `eas.json` (`preview` → `apk`), documentación para ClickUp (`README.md`, `docs/`) y ampliación a **8 suites / 26 pruebas aprobadas**.
-- **Commit final (hash):** *Completar con el hash del commit etiquetado de entrega final (ej. `v1.0.0`).*
-- **Mensaje del commit:** *Completar con el mensaje del commit final.*
+- **Evolución Etapa 2 (Proyecto Integrador):** se añadió `expo-secure-store`, `AuthContext` con rutas protegidas y manejo de `401`, cliente REST conectado a `smora` en Render (`https://smora.onrender.com`) + mock contractual, 6 pantallas en Expo Router (`login`, `register`, tablero, `new`, `task/[id]`, `profile`), mejoras de accesibilidad, rediseño oscuro con acento lima (`src/theme/theme.ts`) e íconos renovados, configuración `eas.json` (`preview` → `apk`, Build ID `89faa720-ec5b-4b39-8986-524fcbccc7d8`), documentación para ClickUp (`README.md`, `docs/`) y ampliación a **8 suites / 26 pruebas aprobadas** (`tsc --noEmit` sin errores).
+- **Versión / etiqueta de entrega final:** `v1.0.0` en `main` (`https://github.com/santiago99-mora/gestor_tareas.git`).
+- **Mensaje del commit final:** `style: rediseño oscuro con acento lima, config EAS Render y docs finales`
 - **Qué aprendí y cómo lo aplicaría a mi app final:** Diferenciar síntoma de causa raíz antes de editar código (mutación de estado, dependencias faltantes en `useMemo`, `finally` en promesas que pueden fallar y claves estables por `id` en `FlatList`). En la integración real con `smora` se aplicó el mismo patrón con `AbortController`, clasificación de errores (`network`, `timeout`, `401`, `5xx`), almacenamiento seguro del JWT en `expo-secure-store` y pruebas unitarias/de componentes desde el primer hito.
 
 ## Transparencia de uso de asistentes de IA (EDI 2026)

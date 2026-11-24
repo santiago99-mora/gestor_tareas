@@ -15,6 +15,7 @@ import {
 import { getApiBaseUrl } from '../../src/config/env';
 import { useAuth } from '../../src/context/AuthContext';
 import { ApiError } from '../../src/services/apiClient';
+import { COLORS, MONO_FONT, RADII } from '../../src/theme/theme';
 import { validateAuthForm } from '../../src/utils/authValidation';
 
 /**
@@ -27,6 +28,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState<'email' | 'password' | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +68,14 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.eyebrow}>EDI · REACT NATIVE 2026</Text>
+          <View style={styles.brandRow}>
+            <Text style={styles.brandText}>GESTOR TAREAS</Text>
+            <View style={styles.brandBadge}>
+              <Text style={styles.brandBadgeText}>EDI 2026</Text>
+            </View>
+          </View>
+
+          <Text style={styles.eyebrow}>ACCESO AL SISTEMA</Text>
           <Text style={styles.title}>Iniciar sesión</Text>
           <Text style={styles.subtitle}>
             Accedé a tus tareas sincronizadas con autenticación JWT segura.
@@ -90,13 +99,15 @@ export default function LoginScreen() {
               testID="login-email-input"
               accessibilityLabel="Correo electrónico"
               placeholder="usuario@correo.com"
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
               value={email}
               onChangeText={setEmail}
-              style={styles.input}
+              onFocus={() => setFocusedField('email')}
+              onBlur={() => setFocusedField(null)}
+              style={[styles.input, focusedField === 'email' && styles.inputFocused]}
             />
 
             <Text style={[styles.label, styles.fieldSpacing]}>CONTRASEÑA</Text>
@@ -105,13 +116,15 @@ export default function LoginScreen() {
                 testID="login-password-input"
                 accessibilityLabel="Contraseña"
                 placeholder="Mínimo 6 caracteres"
-                placeholderTextColor="#8B98AD"
+                placeholderTextColor={COLORS.textMuted}
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
+                onFocus={() => setFocusedField('password')}
+                onBlur={() => setFocusedField(null)}
                 returnKeyType="done"
                 onSubmitEditing={() => void handleSubmit()}
-                style={styles.passwordInput}
+                style={[styles.passwordInput, focusedField === 'password' && styles.inputFocused]}
               />
               <Pressable
                 accessibilityRole="button"
@@ -132,9 +145,9 @@ export default function LoginScreen() {
               style={[styles.primaryButton, submitting && styles.buttonDisabled]}
             >
               {submitting ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={COLORS.accentDarkInk} />
               ) : (
-                <Text style={styles.primaryButtonText}>Ingresar</Text>
+                <Text style={styles.primaryButtonText}>Ingresar  →</Text>
               )}
             </Pressable>
 
@@ -152,16 +165,19 @@ export default function LoginScreen() {
           <View style={styles.footerLinks}>
             <Text style={styles.footerHint}>¿Todavía no tenés cuenta?</Text>
             <Link href="/(auth)/register" asChild>
-              <Pressable accessibilityRole="button" style={styles.linkButton}>
-                <Text style={styles.linkText}>Crear cuenta nueva →</Text>
+              <Pressable accessibilityRole="button" style={styles.outlineButton}>
+                <Text style={styles.outlineButtonText}>Crear cuenta nueva  →</Text>
               </Pressable>
             </Link>
           </View>
 
           <View style={styles.envCard}>
-            <Text style={styles.envTitle}>
-              Modo actual: {useMock ? 'Mock contractual local' : 'API FastAPI'}
-            </Text>
+            <View style={styles.envHeader}>
+              <View style={[styles.statusDot, !useMock && styles.statusDotLive]} />
+              <Text style={styles.envTitle}>
+                Modo actual: {useMock ? 'Mock contractual local' : 'API FastAPI'}
+              </Text>
+            </View>
             <Text style={styles.envUrl}>
               {useMock ? 'Simulación local compatible 1:1 con smora' : getApiBaseUrl()}
             </Text>
@@ -183,113 +199,179 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F5F7FB' },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
   flex: { flex: 1 },
   content: { padding: 22, paddingBottom: 40, flexGrow: 1, justifyContent: 'center' },
-  eyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 1.5, color: '#147D73' },
-  title: { fontSize: 30, fontWeight: '900', color: '#172743', marginTop: 8 },
-  subtitle: { fontSize: 14, color: '#5A6B82', marginTop: 6, marginBottom: 20, lineHeight: 20 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 22 },
+  brandText: {
+    fontSize: 12,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.8,
+    color: COLORS.accent,
+  },
+  brandBadge: {
+    backgroundColor: COLORS.accent,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: RADII.badge,
+  },
+  brandBadgeText: {
+    color: COLORS.accentDarkInk,
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+  },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.6,
+    color: COLORS.textSecondary,
+  },
+  title: { fontSize: 30, fontWeight: '900', color: COLORS.textPrimary, marginTop: 6 },
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginTop: 6,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
   noticeBox: {
-    backgroundColor: '#FFFBEB',
-    borderColor: '#FDE68A',
+    backgroundColor: COLORS.warningBg,
+    borderColor: COLORS.warningBorder,
     borderWidth: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     marginBottom: 14,
   },
-  noticeText: { color: '#92400E', fontSize: 13, fontWeight: '700' },
+  noticeText: { color: COLORS.warningText, fontSize: 13, fontWeight: '700' },
   errorBox: {
-    backgroundColor: '#FFF0F0',
-    borderColor: '#F2C6CC',
+    backgroundColor: COLORS.dangerBg,
+    borderColor: COLORS.dangerBorder,
     borderWidth: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     marginBottom: 14,
   },
-  errorText: { color: '#A53342', fontSize: 13, fontWeight: '700' },
+  errorText: { color: COLORS.dangerText, fontSize: 13, fontWeight: '700' },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E4EAF2',
+    borderColor: COLORS.border,
   },
-  label: { fontSize: 11, fontWeight: '900', letterSpacing: 1, color: '#384E6D', marginBottom: 8 },
+  label: {
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.2,
+    color: COLORS.textSecondary,
+    marginBottom: 8,
+  },
   fieldSpacing: { marginTop: 14 },
   input: {
-    backgroundColor: '#F9FBFD',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: '#172743',
+    color: COLORS.textPrimary,
     minHeight: 46,
   },
+  inputFocused: { borderColor: COLORS.accent },
   passwordRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
   passwordInput: {
     flex: 1,
-    backgroundColor: '#F9FBFD',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: '#172743',
+    color: COLORS.textPrimary,
     minHeight: 46,
   },
   toggleBtn: {
     paddingHorizontal: 12,
     minHeight: 46,
-    borderRadius: 12,
-    backgroundColor: '#E7ECF5',
+    borderRadius: RADII.control,
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  toggleText: { color: '#172743', fontWeight: '800', fontSize: 12 },
+  toggleText: { color: COLORS.textPrimary, fontWeight: '800', fontSize: 12 },
   primaryButton: {
-    backgroundColor: '#147D73',
-    borderRadius: 12,
+    backgroundColor: COLORS.accent,
+    borderRadius: RADII.control,
     minHeight: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 18,
   },
   buttonDisabled: { opacity: 0.65 },
-  primaryButtonText: { color: '#FFFFFF', fontWeight: '900', fontSize: 15 },
+  primaryButtonText: { color: COLORS.accentDarkInk, fontWeight: '900', fontSize: 15 },
   secondaryButton: {
-    backgroundColor: '#E5F2EF',
-    borderRadius: 12,
+    backgroundColor: COLORS.surfaceAlt,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     minHeight: 44,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
-  secondaryButtonText: { color: '#147D73', fontWeight: '800', fontSize: 13 },
-  footerLinks: { alignItems: 'center', marginTop: 20, gap: 6 },
-  footerHint: { color: '#5A6B82', fontSize: 13 },
-  linkButton: { paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
-  linkText: { color: '#172743', fontWeight: '900', fontSize: 14 },
+  secondaryButtonText: { color: COLORS.textSecondary, fontWeight: '800', fontSize: 13 },
+  footerLinks: { alignItems: 'center', marginTop: 20, gap: 10 },
+  footerHint: { color: COLORS.textMuted, fontSize: 12 },
+  outlineButton: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: COLORS.accentBorder,
+    backgroundColor: COLORS.accentTint,
+    borderRadius: RADII.control,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+  },
+  outlineButtonText: { color: COLORS.accent, fontWeight: '800', fontSize: 13 },
   envCard: {
     marginTop: 18,
-    backgroundColor: '#EEF2F8',
-    borderRadius: 14,
+    backgroundColor: COLORS.surfaceAlt,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADII.card,
     padding: 14,
     gap: 6,
   },
-  envTitle: { fontSize: 12, fontWeight: '800', color: '#172743' },
-  envUrl: { fontSize: 11, color: '#5A6B82' },
+  envHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: COLORS.warningText,
+  },
+  statusDotLive: { backgroundColor: COLORS.accent },
+  envTitle: { fontSize: 12, fontWeight: '800', color: COLORS.textPrimary },
+  envUrl: { fontSize: 11, color: COLORS.textMuted, fontFamily: MONO_FONT },
   modeButton: {
     alignSelf: 'flex-start',
     marginTop: 4,
     paddingVertical: 8,
     paddingHorizontal: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 9,
-    minHeight: 40,
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
+    minHeight: 38,
     justifyContent: 'center',
   },
-  modeButtonText: { fontSize: 12, fontWeight: '800', color: '#147D73' },
+  modeButtonText: { fontSize: 12, fontWeight: '800', color: COLORS.accent },
 });

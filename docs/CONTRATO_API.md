@@ -1,7 +1,7 @@
 # Ficha de Interoperabilidad · Contrato API REST (`smora` ↔ App Móvil)
 
 ## Datos generales del contrato
-- **Backend de referencia:** [`https://github.com/santiago99-mora/smora.git`](https://github.com/santiago99-mora/smora.git)
+- **Backend de referencia:** [`https://github.com/santiago99-mora/smora.git`](https://github.com/santiago99-mora/smora.git) · URL desplegada: `https://smora.onrender.com`
 - **Protocolo y formato:** `HTTPS` (producción/EAS `preview`) · `JSON` UTF-8
 - **Autenticación:** `JWT` (`Bearer`) devuelto en `access_token` y enviado en `Authorization: Bearer <token>`
 - **Usuario de prueba (seed automático):**
@@ -98,5 +98,5 @@ Elimina la tarea del usuario autenticado.
 
 ## Manejo de fallos y contingencia
 - **HTTP `401`:** `apiClient` invoca el hook registrado por `AuthContext`, borra el token de `expo-secure-store` y redirige a `/(auth)/login` con aviso visible.
-- **Fallo de red / timeout (10 s):** se clasifica como `network` / `timeout` y se muestra `StateFeedback` con botón *Reintentar*.
+- **Fallo de red / timeout (45 s):** se clasifica como `network` / `timeout` y se muestra `StateFeedback` con botón *Reintentar*.
 - **Mock contractual (`EXPO_PUBLIC_USE_MOCK=true` o selector en UI):** replica exactamente estos esquemas y códigos HTTP en memoria para pruebas o defensa si el servidor externo se encontrara caído.

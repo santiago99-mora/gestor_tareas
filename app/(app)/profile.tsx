@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { getApiBaseUrl } from '../../src/config/env';
 import { useAuth } from '../../src/context/AuthContext';
 import { listTasks } from '../../src/services/taskService';
+import { COLORS, MONO_FONT, RADII } from '../../src/theme/theme';
 
 /**
  * Pantalla 6 · Perfil de usuario, diagnóstico de sesión/API y cierre de sesión (`logout`).
@@ -54,9 +55,12 @@ export default function ProfileScreen() {
 
         <View style={styles.card}>
           <Text style={styles.cardLabel}>CONEXIÓN CON BACKEND</Text>
-          <Text style={styles.cardValue}>
-            {useMock ? 'Mock contractual local' : 'Servidor FastAPI (smora)'}
-          </Text>
+          <View style={styles.connRow}>
+            <View style={[styles.liveDot, useMock && styles.mockDot]} />
+            <Text style={styles.cardValue}>
+              {useMock ? 'Mock contractual local' : 'Servidor FastAPI (smora)'}
+            </Text>
+          </View>
           <Text style={styles.cardSub}>URL configurada: {getApiBaseUrl()}</Text>
 
           <Pressable
@@ -107,60 +111,81 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F5F7FB' },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
   content: { padding: 20, paddingBottom: 40 },
   back: { paddingVertical: 10, minHeight: 44, justifyContent: 'center', marginBottom: 8 },
-  backText: { color: '#147D73', fontWeight: '800', fontSize: 14 },
-  eyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 1.5, color: '#147D73' },
-  title: { fontSize: 28, fontWeight: '900', color: '#172743', marginTop: 6, marginBottom: 18 },
+  backText: { color: COLORS.accent, fontWeight: '800', fontSize: 13, fontFamily: MONO_FONT },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.5,
+    color: COLORS.accent,
+  },
+  title: { fontSize: 28, fontWeight: '900', color: COLORS.textPrimary, marginTop: 6, marginBottom: 18 },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#E4EAF2',
+    borderColor: COLORS.border,
     marginBottom: 14,
   },
-  cardLabel: { fontSize: 10, fontWeight: '900', letterSpacing: 1, color: '#5A6B82' },
-  cardValue: { fontSize: 16, fontWeight: '900', color: '#172743', marginTop: 6 },
-  cardSub: { fontSize: 12, color: '#5A6B82', marginTop: 4, lineHeight: 18 },
+  cardLabel: {
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.1,
+    color: COLORS.textMuted,
+  },
+  connRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
+  liveDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: COLORS.accent },
+  mockDot: { backgroundColor: COLORS.warningText },
+  cardValue: { fontSize: 16, fontWeight: '900', color: COLORS.textPrimary, marginTop: 4 },
+  cardSub: { fontSize: 12, color: COLORS.textSecondary, marginTop: 6, lineHeight: 18 },
   secondaryButton: {
     marginTop: 14,
-    backgroundColor: '#E5F2EF',
-    borderRadius: 10,
+    backgroundColor: COLORS.accentTint,
+    borderWidth: 1,
+    borderColor: COLORS.accentBorder,
+    borderRadius: RADII.control,
     minHeight: 44,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 14,
   },
-  secondaryButtonText: { color: '#147D73', fontWeight: '800', fontSize: 13 },
+  secondaryButtonText: { color: COLORS.accent, fontWeight: '800', fontSize: 13 },
   warnButton: {
     marginTop: 10,
-    backgroundColor: '#FEF3C7',
-    borderRadius: 10,
+    backgroundColor: COLORS.warningBg,
+    borderWidth: 1,
+    borderColor: COLORS.warningBorder,
+    borderRadius: RADII.control,
     minHeight: 44,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 14,
   },
-  warnButtonText: { color: '#92400E', fontWeight: '800', fontSize: 13 },
+  warnButtonText: { color: COLORS.warningText, fontWeight: '800', fontSize: 13 },
   guideButton: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.control,
     minHeight: 46,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#DCE4F0',
+    borderColor: COLORS.borderStrong,
     marginBottom: 12,
   },
-  guideButtonText: { color: '#172743', fontWeight: '800', fontSize: 14 },
+  guideButtonText: { color: COLORS.textPrimary, fontWeight: '800', fontSize: 14 },
   logoutButton: {
-    backgroundColor: '#A53342',
-    borderRadius: 12,
+    backgroundColor: COLORS.dangerBg,
+    borderWidth: 1,
+    borderColor: COLORS.dangerBorder,
+    borderRadius: RADII.control,
     minHeight: 48,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoutButtonText: { color: '#FFFFFF', fontWeight: '900', fontSize: 15 },
+  logoutButtonText: { color: COLORS.dangerText, fontWeight: '900', fontSize: 15 },
 });

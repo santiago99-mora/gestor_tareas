@@ -1,5 +1,5 @@
-/** Tiempo límite por defecto para peticiones HTTP hacia la API. */
-export const DEFAULT_REQUEST_TIMEOUT_MS = 10_000;
+/** Tiempo límite por defecto para peticiones HTTP (contempla cold starts en Render Free). */
+export const DEFAULT_REQUEST_TIMEOUT_MS = 45_000;
 
 /**
  * Obtiene la URL base configurada mediante `EXPO_PUBLIC_API_URL`,

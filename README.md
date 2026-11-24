@@ -60,6 +60,7 @@ src/
 ├── config/                  # Lectura de variables EXPO_PUBLIC_*
 ├── context/                 # AuthContext (restauración, signIn, signUp, signOut, 401)
 ├── services/                # apiClient, tokenStorage, authService, taskService, mockStore
+├── theme/                   # Sistema de diseño centralizado (Obsidian & Volt Lime)
 ├── types/                   # Tipos TypeScript de Auth y Task
 └── utils/                   # filterTasks, isValidTaskTitle, validateAuthForm
 __tests__/                   # Suite Jest + RNTL (8 archivos, 26 tests)
@@ -72,7 +73,7 @@ __tests__/                   # Suite Jest + RNTL (8 archivos, 26 tests)
 Copiá `.env.example` a `.env` (`.env` está excluido en `.gitignore`):
 
 ```env
-EXPO_PUBLIC_API_URL=https://gestor-tareas-api.onrender.com
+EXPO_PUBLIC_API_URL=https://smora.onrender.com
 EXPO_PUBLIC_USE_MOCK=false
 ```
 

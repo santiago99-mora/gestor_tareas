@@ -23,6 +23,7 @@ import {
   listTasks,
   updateTaskStatus,
 } from '../../src/services/taskService';
+import { COLORS, MONO_FONT, RADII } from '../../src/theme/theme';
 import type { Task, TaskStatus } from '../../src/types/task';
 import { filterTasks } from '../../src/utils/taskFilters';
 import { isValidTaskTitle } from '../../src/utils/taskValidation';
@@ -43,6 +44,7 @@ export default function TaskManagerScreen() {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<TaskStatus>('todas');
   const [newTitle, setNewTitle] = useState('');
+  const [focusedField, setFocusedField] = useState<'new' | 'search' | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [busyTaskId, setBusyTaskId] = useState<string | null>(null);
@@ -194,7 +196,9 @@ export default function TaskManagerScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => void loadTasks({ isRefresh: true })}
-            colors={['#147D73']}
+            tintColor={COLORS.accent}
+            colors={[COLORS.accent]}
+            progressBackgroundColor={COLORS.surface}
           />
         }
         keyboardShouldPersistTaps="handled"
@@ -202,10 +206,13 @@ export default function TaskManagerScreen() {
         ListHeaderComponent={
           <>
             <View style={styles.eyebrowRow}>
-              <View>
-                <Text style={styles.eyebrow}>
-                  {useMock ? 'MODO MOCK CONTRACTUAL' : 'API CONECTADA · JWT'}
-                </Text>
+              <View style={styles.identityCol}>
+                <View style={styles.eyebrowLine}>
+                  <View style={[styles.liveDot, useMock && styles.mockDot]} />
+                  <Text style={styles.eyebrow}>
+                    {useMock ? 'MODO MOCK CONTRACTUAL' : 'API CONECTADA · JWT'}
+                  </Text>
+                </View>
                 {user ? <Text style={styles.userEmail}>{user.email}</Text> : null}
               </View>
               <View style={styles.headerActions}>
@@ -233,9 +240,9 @@ export default function TaskManagerScreen() {
             <Text style={styles.heading}>Gestor de tareas</Text>
 
             <View style={styles.statsRow}>
-              <View style={[styles.stat, styles.statDark]}>
-                <Text style={styles.statLabelLight}>TAREAS</Text>
-                <Text style={styles.statNumberLight}>{total}</Text>
+              <View style={[styles.stat, styles.statAccent]}>
+                <Text style={styles.statLabelAccent}>TAREAS</Text>
+                <Text style={styles.statNumberAccent}>{total}</Text>
               </View>
               <View style={styles.stat}>
                 <Text style={styles.statLabel}>COMPLETADAS</Text>
@@ -253,12 +260,14 @@ export default function TaskManagerScreen() {
                 testID="new-task-input"
                 accessibilityLabel="Nombre de la nueva tarea"
                 placeholder="Ej.: Revisar documentación"
-                placeholderTextColor="#8B98AD"
+                placeholderTextColor={COLORS.textMuted}
                 value={newTitle}
                 onChangeText={setNewTitle}
+                onFocus={() => setFocusedField('new')}
+                onBlur={() => setFocusedField(null)}
                 returnKeyType="done"
                 onSubmitEditing={() => void addQuickTask()}
-                style={styles.addInput}
+                style={[styles.addInput, focusedField === 'new' && styles.inputFocused]}
               />
               <Pressable
                 accessibilityRole="button"
@@ -278,10 +287,12 @@ export default function TaskManagerScreen() {
               testID="search-input"
               accessibilityLabel="Buscar tareas"
               placeholder="Buscar por nombre..."
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               value={query}
               onChangeText={setQuery}
-              style={styles.searchInput}
+              onFocus={() => setFocusedField('search')}
+              onBlur={() => setFocusedField(null)}
+              style={[styles.searchInput, focusedField === 'search' && styles.inputFocused]}
             />
             <StatusTabs current={status} onChange={setStatus} />
 
@@ -329,7 +340,7 @@ export default function TaskManagerScreen() {
 
             {loading ? (
               <View style={styles.loading}>
-                <ActivityIndicator color="#147D73" size="large" />
+                <ActivityIndicator color={COLORS.accent} size="large" />
                 <Text style={styles.loadingLabel}>Consultando tareas…</Text>
               </View>
             ) : null}
@@ -363,7 +374,7 @@ export default function TaskManagerScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F5F7FB' },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
   listContainer: { paddingHorizontal: 19, paddingTop: 16, paddingBottom: 55, flexGrow: 1 },
   eyebrowRow: {
     flexDirection: 'row',
@@ -371,116 +382,178 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: 10,
   },
-  eyebrow: { fontSize: 10, letterSpacing: 1.3, fontWeight: '900', color: '#147D73' },
-  userEmail: { fontSize: 12, color: '#4B5A75', fontWeight: '700', marginTop: 2 },
+  identityCol: { flex: 1, minWidth: 0 },
+  eyebrowLine: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  liveDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: COLORS.accent },
+  mockDot: { backgroundColor: COLORS.warningText },
+  eyebrow: {
+    fontSize: 10,
+    letterSpacing: 1.3,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    color: COLORS.accent,
+  },
+  userEmail: { fontSize: 12, color: COLORS.textSecondary, fontWeight: '600', marginTop: 3 },
   headerActions: { flexDirection: 'row', gap: 8 },
   newButton: {
-    backgroundColor: '#147D73',
+    backgroundColor: COLORS.accent,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 10,
+    borderRadius: RADII.control,
     minHeight: 42,
     justifyContent: 'center',
   },
-  newButtonText: { fontWeight: '800', color: '#FFFFFF', fontSize: 12 },
+  newButtonText: { fontWeight: '900', color: COLORS.accentDarkInk, fontSize: 12 },
   profileButton: {
-    backgroundColor: '#E5EFEC',
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 10,
+    borderRadius: RADII.control,
     minHeight: 42,
     justifyContent: 'center',
   },
-  profileButtonText: { fontWeight: '800', color: '#147D73', fontSize: 12 },
-  heading: { fontSize: 28, fontWeight: '900', color: '#172743', marginTop: 10, marginBottom: 16 },
+  profileButtonText: { fontWeight: '800', color: COLORS.textPrimary, fontSize: 12 },
+  heading: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: COLORS.textPrimary,
+    marginTop: 10,
+    marginBottom: 16,
+  },
   statsRow: { flexDirection: 'row', gap: 8, marginBottom: 20 },
   stat: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.surface,
     padding: 12,
-    borderRadius: 15,
+    borderRadius: RADII.card,
     flex: 1,
-    borderColor: '#E7EBF3',
+    borderColor: COLORS.border,
     borderWidth: 1,
   },
-  statDark: { backgroundColor: '#172743', borderColor: '#172743' },
-  statLabel: { fontWeight: '800', color: '#5A6B82', fontSize: 9, letterSpacing: 0.35 },
-  statLabelLight: { fontWeight: '800', color: '#B3C4DD', fontSize: 9, letterSpacing: 0.35 },
-  statNumber: { marginTop: 8, color: '#172743', fontWeight: '900', fontSize: 24 },
-  statNumberLight: { marginTop: 8, color: '#FFFFFF', fontWeight: '900', fontSize: 24 },
-  label: { fontSize: 11, color: '#384E6D', fontWeight: '900', letterSpacing: 1.1, marginBottom: 8 },
+  statAccent: { backgroundColor: COLORS.accentTint, borderColor: COLORS.accentBorder },
+  statLabel: {
+    fontWeight: '800',
+    color: COLORS.textMuted,
+    fontSize: 9,
+    fontFamily: MONO_FONT,
+    letterSpacing: 0.4,
+  },
+  statLabelAccent: {
+    fontWeight: '900',
+    color: COLORS.accent,
+    fontSize: 9,
+    fontFamily: MONO_FONT,
+    letterSpacing: 0.4,
+  },
+  statNumber: {
+    marginTop: 8,
+    color: COLORS.textPrimary,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    fontSize: 24,
+  },
+  statNumberAccent: {
+    marginTop: 8,
+    color: COLORS.accent,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    fontSize: 24,
+  },
+  label: {
+    fontSize: 10,
+    color: COLORS.textSecondary,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.2,
+    marginBottom: 8,
+  },
   sectionHeading: { marginTop: 12 },
   addRow: { flexDirection: 'row', gap: 8, marginBottom: 7 },
   addInput: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 12,
     paddingVertical: 11,
-    color: '#172743',
+    color: COLORS.textPrimary,
     fontSize: 14,
     minHeight: 46,
     minWidth: 0,
   },
+  inputFocused: { borderColor: COLORS.accent },
   addButton: {
-    backgroundColor: '#147D73',
+    backgroundColor: COLORS.accent,
     paddingHorizontal: 14,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     minHeight: 46,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonDisabled: { opacity: 0.6 },
-  addButtonText: { color: '#FFFFFF', fontWeight: '800', fontSize: 13 },
-  feedback: { color: '#147D73', fontSize: 12, fontWeight: '700', marginBottom: 8 },
+  addButtonText: { color: COLORS.accentDarkInk, fontWeight: '900', fontSize: 13 },
+  feedback: { color: COLORS.accent, fontSize: 12, fontWeight: '700', marginBottom: 8 },
   searchInput: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 13,
     paddingVertical: 12,
-    color: '#172743',
+    color: COLORS.textPrimary,
     fontSize: 14,
     minHeight: 46,
     marginBottom: 12,
   },
   actions: { flexDirection: 'row', gap: 7, marginBottom: 10 },
   retryButton: {
-    paddingVertical: 11,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#E5F2EF',
-    borderRadius: 10,
+    backgroundColor: COLORS.surface,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     flex: 1,
-    minHeight: 44,
+    minHeight: 42,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  retryLabel: { fontSize: 11, color: '#147D73', fontWeight: '800' },
+  retryLabel: { fontSize: 11, color: COLORS.accent, fontWeight: '800' },
   simulateButton: {
-    paddingVertical: 11,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#FDEBEB',
-    borderRadius: 10,
+    backgroundColor: COLORS.dangerBg,
+    borderWidth: 1,
+    borderColor: COLORS.dangerBorder,
+    borderRadius: RADII.control,
     flex: 1,
-    minHeight: 44,
+    minHeight: 42,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  simulateLabel: { fontSize: 11, color: '#A53342', fontWeight: '800' },
+  simulateLabel: { fontSize: 11, color: COLORS.dangerText, fontWeight: '800' },
   offlineButton: {
-    paddingVertical: 11,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#FEF3C7',
-    borderRadius: 10,
+    backgroundColor: COLORS.warningBg,
+    borderWidth: 1,
+    borderColor: COLORS.warningBorder,
+    borderRadius: RADII.control,
     flex: 1,
-    minHeight: 44,
+    minHeight: 42,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  offlineLabel: { fontSize: 11, color: '#92400E', fontWeight: '800' },
+  offlineLabel: { fontSize: 11, color: COLORS.warningText, fontWeight: '800' },
   loading: { alignItems: 'center', paddingTop: 24, paddingBottom: 18, gap: 10 },
-  loadingLabel: { color: '#5A6B82', fontSize: 13, fontWeight: '600' },
-  footer: { textAlign: 'center', color: '#7D8B9F', fontSize: 10, paddingTop: 28 },
+  loadingLabel: { color: COLORS.textSecondary, fontSize: 13, fontWeight: '600' },
+  footer: {
+    textAlign: 'center',
+    color: COLORS.textMuted,
+    fontSize: 10,
+    fontFamily: MONO_FONT,
+    paddingTop: 28,
+  },
 });

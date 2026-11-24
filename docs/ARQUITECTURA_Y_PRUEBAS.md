@@ -3,9 +3,10 @@
 ## 1. Mapa de arquitectura por capas
 - **`app/_layout.tsx` y `app/index.tsx`:** envuelven la app en `SafeAreaProvider` + `AuthProvider` y protegen rutas (`!token` → `/(auth)/login`; `token` → `/(app)/tasks`).
 - **`src/context/AuthContext.tsx`:** restaura sesión al arranque desde `expo-secure-store`, valida vigencia con `GET /api/auth/me` (conservando resiliencia si inicia offline y cerrando sesión si devuelve `401`) y expone `signIn`, `signUp`, `signOut` y cambio de modo API/Mock.
-- **`src/services/apiClient.ts`:** cliente `fetch` centralizado con `AbortController`, timeout de 10 s, parseo de errores FastAPI (`detail`), soporte `204 No Content`, inyección de `Authorization: Bearer` y callback global `401`.
+- **`src/services/apiClient.ts`:** cliente `fetch` centralizado con `AbortController`, timeout de 45 s, parseo de errores FastAPI (`detail`), soporte `204 No Content`, inyección de `Authorization: Bearer` y callback global `401`.
 - **`src/services/taskService.ts`:** adapta `ApiTask` (`id: number`, `status: 'pendiente' | 'resuelta'`, `description: string | null`) al modelo de interfaz `Task` (`id: string`, `completed: boolean`, `description: string`).
 - **`src/components/`:** componentes reutilizables (`TaskCard`, `StatusTabs`, `StateFeedback`) con JSDoc/TSDoc y atributos de accesibilidad.
+- **`src/theme/theme.ts`:** tokens centralizados del tema oscuro de alto contraste (`COLORS`, `MONO_FONT`, `RADII`) compartidos entre pantallas y componentes.
 
 ## 2. Revisión de accesibilidad aplicada
 - **Áreas táctiles:** controles `check` y `expandButton` en `TaskCard` ampliados con `hitSlop` a ≥ 48 dp efectivos; botones principales y pestañas con `minHeight` entre 42 y 48 dp.

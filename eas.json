@@ -14,7 +14,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://gestor-tareas-api.onrender.com",
+        "EXPO_PUBLIC_API_URL": "https://smora.onrender.com",
         "EXPO_PUBLIC_USE_MOCK": "false"
       }
     },

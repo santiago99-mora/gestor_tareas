@@ -5,12 +5,12 @@
     "scheme": "gestortareas",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#172743"
+      "backgroundColor": "#111315"
     },
     "plugins": [
       "expo-router",
@@ -21,7 +21,7 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#172743"
+        "backgroundColor": "#111315"
       }
     },
     "ios": {
@@ -29,6 +29,12 @@
     },
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "314b5525-e6ac-40a1-9b07-56a9388a8fb9"
+      }
     }
   }
 }

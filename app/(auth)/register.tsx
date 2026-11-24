@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
 import { ApiError } from '../../src/services/apiClient';
+import { COLORS, MONO_FONT, RADII } from '../../src/theme/theme';
 import { validateAuthForm } from '../../src/utils/authValidation';
 
 /**
@@ -25,6 +26,7 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [focusedField, setFocusedField] = useState<'email' | 'password' | 'confirm' | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +59,12 @@ export default function RegisterScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <Text style={styles.eyebrow}>NUEVA CUENTA</Text>
+          <View style={styles.brandRow}>
+            <Text style={styles.eyebrow}>NUEVA CUENTA</Text>
+            <View style={styles.brandBadge}>
+              <Text style={styles.brandBadgeText}>JWT SYNC</Text>
+            </View>
+          </View>
           <Text style={styles.title}>Registrarse</Text>
           <Text style={styles.subtitle}>
             Creá tu usuario personal para administrar tus propias tareas en la nube.
@@ -75,13 +82,15 @@ export default function RegisterScreen() {
               testID="register-email-input"
               accessibilityLabel="Correo electrónico"
               placeholder="usuario@correo.com"
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
               value={email}
               onChangeText={setEmail}
-              style={styles.input}
+              onFocus={() => setFocusedField('email')}
+              onBlur={() => setFocusedField(null)}
+              style={[styles.input, focusedField === 'email' && styles.inputFocused]}
             />
 
             <Text style={[styles.label, styles.fieldSpacing]}>CONTRASEÑA</Text>
@@ -89,11 +98,13 @@ export default function RegisterScreen() {
               testID="register-password-input"
               accessibilityLabel="Contraseña"
               placeholder="Mínimo 6 caracteres"
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               secureTextEntry
               value={password}
               onChangeText={setPassword}
-              style={styles.input}
+              onFocus={() => setFocusedField('password')}
+              onBlur={() => setFocusedField(null)}
+              style={[styles.input, focusedField === 'password' && styles.inputFocused]}
             />
 
             <Text style={[styles.label, styles.fieldSpacing]}>CONFIRMAR CONTRASEÑA</Text>
@@ -101,13 +112,15 @@ export default function RegisterScreen() {
               testID="register-confirm-input"
               accessibilityLabel="Confirmar contraseña"
               placeholder="Repetí tu contraseña"
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               secureTextEntry
               value={confirmPassword}
               onChangeText={setConfirmPassword}
+              onFocus={() => setFocusedField('confirm')}
+              onBlur={() => setFocusedField(null)}
               returnKeyType="done"
               onSubmitEditing={() => void handleRegister()}
-              style={styles.input}
+              style={[styles.input, focusedField === 'confirm' && styles.inputFocused]}
             />
 
             <Pressable
@@ -119,17 +132,17 @@ export default function RegisterScreen() {
               style={[styles.primaryButton, submitting && styles.buttonDisabled]}
             >
               {submitting ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={COLORS.accentDarkInk} />
               ) : (
-                <Text style={styles.primaryButtonText}>Crear cuenta</Text>
+                <Text style={styles.primaryButtonText}>Crear cuenta  →</Text>
               )}
             </Pressable>
           </View>
 
           <View style={styles.footerLinks}>
             <Link href="/(auth)/login" asChild>
-              <Pressable accessibilityRole="button" style={styles.linkButton}>
-                <Text style={styles.linkText}>← Ya tengo cuenta, ir a Login</Text>
+              <Pressable accessibilityRole="button" style={styles.outlineButton}>
+                <Text style={styles.outlineButtonText}>← Ya tengo cuenta, ir a Login</Text>
               </Pressable>
             </Link>
           </View>
@@ -140,52 +153,97 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F5F7FB' },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
   flex: { flex: 1 },
   content: { padding: 22, paddingBottom: 40, flexGrow: 1, justifyContent: 'center' },
-  eyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 1.5, color: '#147D73' },
-  title: { fontSize: 30, fontWeight: '900', color: '#172743', marginTop: 8 },
-  subtitle: { fontSize: 14, color: '#5A6B82', marginTop: 6, marginBottom: 20, lineHeight: 20 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.6,
+    color: COLORS.accent,
+  },
+  brandBadge: {
+    backgroundColor: COLORS.accentTint,
+    borderWidth: 1,
+    borderColor: COLORS.accentBorder,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    borderRadius: RADII.badge,
+  },
+  brandBadgeText: {
+    color: COLORS.accent,
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+  },
+  title: { fontSize: 30, fontWeight: '900', color: COLORS.textPrimary, marginTop: 8 },
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginTop: 6,
+    marginBottom: 20,
+    lineHeight: 20,
+  },
   errorBox: {
-    backgroundColor: '#FFF0F0',
-    borderColor: '#F2C6CC',
+    backgroundColor: COLORS.dangerBg,
+    borderColor: COLORS.dangerBorder,
     borderWidth: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     marginBottom: 14,
   },
-  errorText: { color: '#A53342', fontSize: 13, fontWeight: '700' },
+  errorText: { color: COLORS.dangerText, fontSize: 13, fontWeight: '700' },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E4EAF2',
+    borderColor: COLORS.border,
   },
-  label: { fontSize: 11, fontWeight: '900', letterSpacing: 1, color: '#384E6D', marginBottom: 8 },
+  label: {
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.2,
+    color: COLORS.textSecondary,
+    marginBottom: 8,
+  },
   fieldSpacing: { marginTop: 14 },
   input: {
-    backgroundColor: '#F9FBFD',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: '#172743',
+    color: COLORS.textPrimary,
     minHeight: 46,
   },
+  inputFocused: { borderColor: COLORS.accent },
   primaryButton: {
-    backgroundColor: '#172743',
-    borderRadius: 12,
+    backgroundColor: COLORS.accent,
+    borderRadius: RADII.control,
     minHeight: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 18,
   },
   buttonDisabled: { opacity: 0.65 },
-  primaryButtonText: { color: '#FFFFFF', fontWeight: '900', fontSize: 15 },
+  primaryButtonText: { color: COLORS.accentDarkInk, fontWeight: '900', fontSize: 15 },
   footerLinks: { alignItems: 'center', marginTop: 20 },
-  linkButton: { paddingVertical: 10, paddingHorizontal: 14, minHeight: 44, justifyContent: 'center' },
-  linkText: { color: '#147D73', fontWeight: '900', fontSize: 14 },
+  outlineButton: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.control,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+  },
+  outlineButtonText: { color: COLORS.accent, fontWeight: '800', fontSize: 13 },
 });

@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { COLORS, MONO_FONT, RADII } from '../theme/theme';
 import type { TaskStatus } from '../types/task';
 
 const options: { key: TaskStatus; label: string }[] = [
@@ -37,21 +38,28 @@ export function StatusTabs({ current, onChange }: Props) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: '#E7ECF5',
+    backgroundColor: COLORS.surface,
     padding: 4,
-    borderRadius: 14,
-    gap: 3,
-    marginBottom: 13,
+    borderRadius: RADII.control,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    gap: 4,
+    marginBottom: 12,
   },
   button: {
     flex: 1,
-    borderRadius: 11,
-    paddingVertical: 11,
-    minHeight: 44,
+    borderRadius: RADII.badge,
+    paddingVertical: 10,
+    minHeight: 42,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  active: { backgroundColor: '#FFFFFF' },
-  text: { color: '#53627B', fontWeight: '700', fontSize: 12 },
-  textActive: { color: '#172743', fontWeight: '800' },
+  active: { backgroundColor: COLORS.accent },
+  text: {
+    color: COLORS.textSecondary,
+    fontWeight: '700',
+    fontSize: 12,
+    fontFamily: MONO_FONT,
+  },
+  textActive: { color: COLORS.accentDarkInk, fontWeight: '900' },
 });

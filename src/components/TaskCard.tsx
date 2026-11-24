@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { COLORS, MONO_FONT, RADII } from '../theme/theme';
 import type { Task } from '../types/task';
 
 /** Props del componente `TaskCard`. */
@@ -24,7 +25,7 @@ export function TaskCard({ task, onToggle, onDelete, onOpenDetail, busy = false 
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, task.completed && styles.cardCompleted]}>
       <View style={styles.topLine}>
         <Pressable
           testID={`toggle-${task.id}`}
@@ -48,11 +49,20 @@ export function TaskCard({ task, onToggle, onDelete, onOpenDetail, busy = false 
         >
           <Text style={[styles.title, task.completed && styles.completed]}>{task.title}</Text>
           <View style={styles.row}>
-            <Text style={[styles.priority, task.priority === 'alta' && styles.high]}>
-              {task.priority.toUpperCase()}
-            </Text>
+            <View
+              style={[
+                styles.priorityChip,
+                task.priority === 'alta' && styles.priorityChipHigh,
+              ]}
+            >
+              <Text style={[styles.priority, task.priority === 'alta' && styles.high]}>
+                {task.priority.toUpperCase()}
+              </Text>
+            </View>
             <Text style={styles.dividerText}>·</Text>
-            <Text style={styles.state}>{task.completed ? 'Completada' : 'Pendiente'}</Text>
+            <Text style={[styles.state, task.completed && styles.stateCompleted]}>
+              {task.completed ? 'Completada' : 'Pendiente'}
+            </Text>
           </View>
         </Pressable>
 
@@ -103,62 +113,92 @@ export function TaskCard({ task, onToggle, onDelete, onOpenDetail, busy = false 
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 17,
-    padding: 16,
-    marginBottom: 11,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
+    padding: 15,
+    marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#E7EBF3',
+    borderColor: COLORS.border,
+  },
+  cardCompleted: {
+    borderColor: '#20252A',
+    backgroundColor: '#14171A',
   },
   topLine: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   check: {
-    height: 28,
-    width: 28,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderColor: '#7E8BA3',
+    height: 26,
+    width: 26,
+    borderRadius: RADII.badge,
+    borderWidth: 1.5,
+    borderColor: COLORS.borderStrong,
+    backgroundColor: COLORS.inputBg,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  checked: { backgroundColor: '#147D73', borderColor: '#147D73' },
+  checked: { backgroundColor: COLORS.accent, borderColor: COLORS.accent },
   disabled: { opacity: 0.5 },
-  checkText: { color: '#FFFFFF', fontWeight: '900', fontSize: 16 },
+  checkText: { color: COLORS.accentDarkInk, fontWeight: '900', fontSize: 15 },
   content: { flex: 1 },
-  title: { color: '#192846', fontSize: 15, fontWeight: '800', lineHeight: 21 },
-  completed: { color: '#6E7B91', textDecorationLine: 'line-through' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 6 },
-  priority: { fontSize: 10, letterSpacing: 0.5, color: '#4B6580', fontWeight: '800' },
-  high: { color: '#B93E34' },
-  dividerText: { color: '#9BA6B8', fontSize: 11 },
-  state: { color: '#53627C', fontSize: 11, fontWeight: '600' },
+  title: { color: COLORS.textPrimary, fontSize: 15, fontWeight: '700', lineHeight: 21 },
+  completed: { color: COLORS.textMuted, textDecorationLine: 'line-through' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 7 },
+  priorityChip: {
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.badge,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  priorityChipHigh: {
+    backgroundColor: COLORS.dangerBg,
+    borderColor: COLORS.dangerBorder,
+  },
+  priority: {
+    fontSize: 9,
+    letterSpacing: 0.7,
+    color: COLORS.textSecondary,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+  },
+  high: { color: COLORS.dangerText },
+  dividerText: { color: COLORS.textMuted, fontSize: 11 },
+  state: { color: COLORS.textSecondary, fontSize: 11, fontWeight: '600' },
+  stateCompleted: { color: COLORS.accent },
   expandButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    backgroundColor: '#ECF2F7',
+    width: 34,
+    height: 34,
+    borderRadius: RADII.control,
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  expandText: { color: '#294665', fontWeight: '800', fontSize: 20 },
-  details: { marginTop: 13, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#E9EEF4' },
-  description: { fontSize: 13, color: '#4B5A75', lineHeight: 20 },
+  expandText: { color: COLORS.accent, fontWeight: '800', fontSize: 18 },
+  details: { marginTop: 13, paddingTop: 12, borderTopWidth: 1, borderTopColor: COLORS.border },
+  description: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 20 },
   detailActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 13 },
   detailButton: {
-    paddingVertical: 10,
+    paddingVertical: 9,
     paddingHorizontal: 13,
-    backgroundColor: '#E5F2EF',
-    borderRadius: 9,
+    backgroundColor: COLORS.accentTint,
+    borderWidth: 1,
+    borderColor: COLORS.accentBorder,
+    borderRadius: RADII.control,
     minHeight: 40,
     justifyContent: 'center',
   },
-  detailButtonText: { color: '#147D73', fontSize: 12, fontWeight: '800' },
+  detailButtonText: { color: COLORS.accent, fontSize: 12, fontWeight: '800' },
   deleteButton: {
-    paddingVertical: 10,
+    paddingVertical: 9,
     paddingHorizontal: 13,
-    backgroundColor: '#FFF0F0',
-    borderRadius: 9,
+    backgroundColor: COLORS.dangerBg,
+    borderWidth: 1,
+    borderColor: COLORS.dangerBorder,
+    borderRadius: RADII.control,
     minHeight: 40,
     justifyContent: 'center',
   },
-  deleteText: { color: '#A53342', fontSize: 12, fontWeight: '800' },
+  deleteText: { color: COLORS.dangerText, fontSize: 12, fontWeight: '800' },
 });

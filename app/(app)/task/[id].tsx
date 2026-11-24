@@ -22,6 +22,7 @@ import {
   updateTask,
   updateTaskStatus,
 } from '../../../src/services/taskService';
+import { COLORS, MONO_FONT, RADII } from '../../../src/theme/theme';
 import type { Task, TaskPriority } from '../../../src/types/task';
 import { isValidTaskTitle } from '../../../src/utils/taskValidation';
 
@@ -42,6 +43,7 @@ export default function TaskDetailScreen() {
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('media');
   const [completed, setCompleted] = useState(false);
+  const [focusedField, setFocusedField] = useState<'title' | 'description' | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<{ variant: 'offline' | 'error'; message: string } | null>(
@@ -183,7 +185,7 @@ export default function TaskDetailScreen() {
 
           {loading ? (
             <View style={styles.loading}>
-              <ActivityIndicator size="large" color="#147D73" />
+              <ActivityIndicator size="large" color={COLORS.accent} />
               <Text style={styles.loadingText}>Cargando detalle…</Text>
             </View>
           ) : error && !task ? (
@@ -211,9 +213,9 @@ export default function TaskDetailScreen() {
 
               <View style={styles.card}>
                 <View style={styles.statusBanner}>
-                  <View>
+                  <View style={styles.statusInfo}>
                     <Text style={styles.statusLabel}>ESTADO ACTUAL</Text>
-                    <Text style={styles.statusValue}>
+                    <Text style={[styles.statusValue, completed && styles.statusValueDone]}>
                       {completed ? 'Resuelta (completada)' : 'Pendiente'}
                     </Text>
                   </View>
@@ -235,7 +237,9 @@ export default function TaskDetailScreen() {
                   accessibilityLabel="Título de la tarea"
                   value={title}
                   onChangeText={setTitle}
-                  style={styles.input}
+                  onFocus={() => setFocusedField('title')}
+                  onBlur={() => setFocusedField(null)}
+                  style={[styles.input, focusedField === 'title' && styles.inputFocused]}
                 />
 
                 <Text style={[styles.label, styles.spacing]}>DESCRIPCIÓN</Text>
@@ -245,9 +249,15 @@ export default function TaskDetailScreen() {
                   numberOfLines={4}
                   value={description}
                   onChangeText={setDescription}
+                  onFocus={() => setFocusedField('description')}
+                  onBlur={() => setFocusedField(null)}
                   placeholder="Sin descripción..."
-                  placeholderTextColor="#8B98AD"
-                  style={[styles.input, styles.textArea]}
+                  placeholderTextColor={COLORS.textMuted}
+                  style={[
+                    styles.input,
+                    styles.textArea,
+                    focusedField === 'description' && styles.inputFocused,
+                  ]}
                 />
 
                 <Text style={[styles.label, styles.spacing]}>PRIORIDAD</Text>
@@ -281,7 +291,7 @@ export default function TaskDetailScreen() {
                   style={[styles.saveButton, saving && styles.buttonDisabled]}
                 >
                   <Text style={styles.saveButtonText}>
-                    {saving ? 'Guardando…' : 'Guardar cambios'}
+                    {saving ? 'Guardando…' : 'Guardar cambios  →'}
                   </Text>
                 </Pressable>
 
@@ -304,93 +314,125 @@ export default function TaskDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F5F7FB' },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
   flex: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
   back: { paddingVertical: 10, minHeight: 44, justifyContent: 'center', marginBottom: 8 },
-  backText: { color: '#147D73', fontWeight: '800', fontSize: 14 },
-  eyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 1.5, color: '#147D73' },
-  title: { fontSize: 28, fontWeight: '900', color: '#172743', marginTop: 6, marginBottom: 16 },
+  backText: { color: COLORS.accent, fontWeight: '800', fontSize: 13, fontFamily: MONO_FONT },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.5,
+    color: COLORS.accent,
+  },
+  title: { fontSize: 28, fontWeight: '900', color: COLORS.textPrimary, marginTop: 6, marginBottom: 16 },
   loading: { alignItems: 'center', paddingVertical: 40, gap: 10 },
-  loadingText: { color: '#5A6B82', fontSize: 13, fontWeight: '600' },
+  loadingText: { color: COLORS.textSecondary, fontSize: 13, fontWeight: '600' },
   feedbackBox: {
-    backgroundColor: '#E5F2EF',
+    backgroundColor: COLORS.accentTint,
+    borderWidth: 1,
+    borderColor: COLORS.accentBorder,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     marginBottom: 14,
   },
-  feedbackText: { color: '#147D73', fontSize: 13, fontWeight: '800' },
+  feedbackText: { color: COLORS.accent, fontSize: 13, fontWeight: '800' },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E4EAF2',
+    borderColor: COLORS.border,
   },
   statusBanner: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F2F6FA',
+    backgroundColor: COLORS.surfaceAlt,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     marginBottom: 16,
     gap: 10,
   },
-  statusLabel: { fontSize: 10, fontWeight: '900', color: '#5A6B82', letterSpacing: 0.8 },
-  statusValue: { fontSize: 14, fontWeight: '800', color: '#172743', marginTop: 2 },
+  statusInfo: { flex: 1 },
+  statusLabel: {
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    color: COLORS.textMuted,
+    letterSpacing: 0.9,
+  },
+  statusValue: { fontSize: 14, fontWeight: '800', color: COLORS.textPrimary, marginTop: 3 },
+  statusValueDone: { color: COLORS.accent },
   statusToggleBtn: {
-    backgroundColor: '#172743',
-    paddingVertical: 10,
+    backgroundColor: COLORS.accentTint,
+    borderWidth: 1,
+    borderColor: COLORS.accentBorder,
+    paddingVertical: 9,
     paddingHorizontal: 13,
-    borderRadius: 10,
-    minHeight: 42,
+    borderRadius: RADII.control,
+    minHeight: 40,
     justifyContent: 'center',
   },
-  statusToggleText: { color: '#FFFFFF', fontSize: 12, fontWeight: '800' },
-  label: { fontSize: 11, fontWeight: '900', letterSpacing: 1, color: '#384E6D', marginBottom: 8 },
+  statusToggleText: { color: COLORS.accent, fontSize: 12, fontWeight: '800' },
+  label: {
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.2,
+    color: COLORS.textSecondary,
+    marginBottom: 8,
+  },
   spacing: { marginTop: 14 },
   input: {
-    backgroundColor: '#F9FBFD',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: '#172743',
+    color: COLORS.textPrimary,
     minHeight: 46,
   },
+  inputFocused: { borderColor: COLORS.accent },
   textArea: { minHeight: 96, textAlignVertical: 'top' },
   priorityRow: { flexDirection: 'row', gap: 8 },
   priorityPill: {
     flex: 1,
     minHeight: 44,
-    borderRadius: 10,
-    backgroundColor: '#EDF2F7',
+    borderRadius: RADII.control,
+    backgroundColor: COLORS.surfaceAlt,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  priorityActive: { backgroundColor: '#172743' },
-  priorityText: { fontSize: 13, fontWeight: '800', color: '#4B5A75' },
-  priorityTextActive: { color: '#FFFFFF' },
+  priorityActive: { backgroundColor: COLORS.accent, borderColor: COLORS.accent },
+  priorityText: { fontSize: 13, fontWeight: '800', color: COLORS.textSecondary },
+  priorityTextActive: { color: COLORS.accentDarkInk, fontWeight: '900' },
   saveButton: {
-    backgroundColor: '#147D73',
-    borderRadius: 12,
+    backgroundColor: COLORS.accent,
+    borderRadius: RADII.control,
     minHeight: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
   },
   buttonDisabled: { opacity: 0.6 },
-  saveButtonText: { color: '#FFFFFF', fontWeight: '900', fontSize: 15 },
+  saveButtonText: { color: COLORS.accentDarkInk, fontWeight: '900', fontSize: 15 },
   deleteButton: {
-    backgroundColor: '#FFF0F0',
-    borderRadius: 12,
+    backgroundColor: COLORS.dangerBg,
+    borderWidth: 1,
+    borderColor: COLORS.dangerBorder,
+    borderRadius: RADII.control,
     minHeight: 46,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
   },
-  deleteButtonText: { color: '#A53342', fontWeight: '800', fontSize: 14 },
+  deleteButtonText: { color: COLORS.dangerText, fontWeight: '800', fontSize: 14 },
 });

@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { COLORS, MONO_FONT, RADII } from '../theme/theme';
 
 type StateFeedbackProps = {
   /** Tipo de estado visual a comunicar al usuario. */
@@ -56,9 +57,19 @@ export function StateFeedback({
           accessibilityRole="button"
           accessibilityLabel={retryLabel}
           onPress={onRetry}
-          style={styles.retryButton}
+          style={[
+            styles.retryButton,
+            variant === 'empty' && styles.emptyRetryButton,
+          ]}
         >
-          <Text style={styles.retryText}>↻ {retryLabel}</Text>
+          <Text
+            style={[
+              styles.retryText,
+              variant === 'empty' && styles.emptyRetryText,
+            ]}
+          >
+            ↻ {retryLabel}
+          </Text>
         </Pressable>
       ) : null}
     </View>
@@ -67,42 +78,50 @@ export function StateFeedback({
 
 const styles = StyleSheet.create({
   box: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 15,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
+    borderColor: COLORS.border,
     marginTop: 10,
     marginBottom: 12,
   },
   errorBox: {
-    backgroundColor: '#FFF5F5',
-    borderColor: '#F2C6CC',
+    backgroundColor: COLORS.dangerBg,
+    borderColor: COLORS.dangerBorder,
   },
   offlineBox: {
-    backgroundColor: '#FFFBEB',
-    borderColor: '#FDE68A',
+    backgroundColor: COLORS.warningBg,
+    borderColor: COLORS.warningBorder,
   },
   badge: {
     fontSize: 10,
     fontWeight: '900',
-    letterSpacing: 1,
-    color: '#4B6580',
+    letterSpacing: 1.3,
+    fontFamily: MONO_FONT,
+    color: COLORS.accent,
     marginBottom: 6,
   },
-  errorText: { color: '#A53342' },
-  offlineText: { color: '#9A5B04' },
-  title: { fontSize: 15, fontWeight: '800', color: '#172743', marginBottom: 4 },
-  message: { fontSize: 13, color: '#4B5A75', lineHeight: 19 },
+  errorText: { color: COLORS.dangerText },
+  offlineText: { color: COLORS.warningText },
+  title: { fontSize: 15, fontWeight: '800', color: COLORS.textPrimary, marginBottom: 4 },
+  message: { fontSize: 13, color: COLORS.textSecondary, lineHeight: 19 },
   retryButton: {
     alignSelf: 'flex-start',
     marginTop: 12,
-    backgroundColor: '#172743',
-    paddingVertical: 11,
-    paddingHorizontal: 15,
-    borderRadius: 10,
-    minHeight: 44,
+    backgroundColor: COLORS.surfaceElevated,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: RADII.control,
+    minHeight: 42,
     justifyContent: 'center',
   },
-  retryText: { color: '#FFFFFF', fontWeight: '800', fontSize: 12 },
+  emptyRetryButton: {
+    backgroundColor: COLORS.accentTint,
+    borderColor: COLORS.accentBorder,
+  },
+  retryText: { color: COLORS.textPrimary, fontWeight: '800', fontSize: 12 },
+  emptyRetryText: { color: COLORS.accent },
 });

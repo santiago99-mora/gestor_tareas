@@ -4,6 +4,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider, useAuth } from '../src/context/AuthContext';
+import { COLORS, MONO_FONT } from '../src/theme/theme';
 
 function RootNavigator() {
   const { token, isRestoring } = useAuth();
@@ -26,11 +27,16 @@ function RootNavigator() {
 
   return (
     <View style={styles.root}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: COLORS.bg },
+        }}
+      />
       {isRestoring ? (
         <View style={styles.restoringOverlay}>
-          <ActivityIndicator size="large" color="#147D73" />
-          <Text style={styles.restoringText}>Restaurando sesión segura…</Text>
+          <ActivityIndicator size="large" color={COLORS.accent} />
+          <Text style={styles.restoringText}>RESTAURANDO SESIÓN SEGURA…</Text>
         </View>
       ) : null}
     </View>
@@ -42,7 +48,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar style="dark" />
+        <StatusBar style="light" />
         <RootNavigator />
       </AuthProvider>
     </SafeAreaProvider>
@@ -50,17 +56,23 @@ export default function RootLayout() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: { flex: 1, backgroundColor: COLORS.bg },
   restoringOverlay: {
     position: 'absolute',
     top: 0,
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: '#F5F7FB',
+    backgroundColor: COLORS.bg,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
   },
-  restoringText: { color: '#4B5A75', fontSize: 13, fontWeight: '700' },
+  restoringText: {
+    color: COLORS.textSecondary,
+    fontSize: 12,
+    fontWeight: '700',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.1,
+  },
 });

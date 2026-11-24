@@ -15,6 +15,7 @@ import {
 import { useAuth } from '../../src/context/AuthContext';
 import { ApiError } from '../../src/services/apiClient';
 import { createTask } from '../../src/services/taskService';
+import { COLORS, MONO_FONT, RADII } from '../../src/theme/theme';
 import type { TaskPriority } from '../../src/types/task';
 import { isValidTaskTitle } from '../../src/utils/taskValidation';
 
@@ -32,6 +33,7 @@ export default function NewTaskScreen() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<TaskPriority>('media');
+  const [focusedField, setFocusedField] = useState<'title' | 'description' | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,10 +99,12 @@ export default function NewTaskScreen() {
               testID="create-title-input"
               accessibilityLabel="Título de la tarea"
               placeholder="Ej.: Comprar materiales de oficina"
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               value={title}
               onChangeText={setTitle}
-              style={styles.input}
+              onFocus={() => setFocusedField('title')}
+              onBlur={() => setFocusedField(null)}
+              style={[styles.input, focusedField === 'title' && styles.inputFocused]}
             />
 
             <Text style={[styles.label, styles.spacing]}>DESCRIPCIÓN (OPCIONAL)</Text>
@@ -108,12 +112,18 @@ export default function NewTaskScreen() {
               testID="create-description-input"
               accessibilityLabel="Descripción de la tarea"
               placeholder="Detalles, criterios o notas..."
-              placeholderTextColor="#8B98AD"
+              placeholderTextColor={COLORS.textMuted}
               multiline
               numberOfLines={4}
               value={description}
               onChangeText={setDescription}
-              style={[styles.input, styles.textArea]}
+              onFocus={() => setFocusedField('description')}
+              onBlur={() => setFocusedField(null)}
+              style={[
+                styles.input,
+                styles.textArea,
+                focusedField === 'description' && styles.inputFocused,
+              ]}
             />
 
             <Text style={[styles.label, styles.spacing]}>PRIORIDAD</Text>
@@ -148,9 +158,9 @@ export default function NewTaskScreen() {
               style={[styles.saveButton, submitting && styles.buttonDisabled]}
             >
               {submitting ? (
-                <ActivityIndicator color="#FFFFFF" />
+                <ActivityIndicator color={COLORS.accentDarkInk} />
               ) : (
-                <Text style={styles.saveButtonText}>Guardar tarea</Text>
+                <Text style={styles.saveButtonText}>Guardar tarea  →</Text>
               )}
             </Pressable>
           </View>
@@ -161,63 +171,79 @@ export default function NewTaskScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: '#F5F7FB' },
+  screen: { flex: 1, backgroundColor: COLORS.bg },
   flex: { flex: 1 },
   content: { padding: 20, paddingBottom: 40 },
   back: { paddingVertical: 10, minHeight: 44, justifyContent: 'center', marginBottom: 8 },
-  backText: { color: '#147D73', fontWeight: '800', fontSize: 14 },
-  eyebrow: { fontSize: 10, fontWeight: '900', letterSpacing: 1.5, color: '#147D73' },
-  title: { fontSize: 28, fontWeight: '900', color: '#172743', marginTop: 6, marginBottom: 18 },
+  backText: { color: COLORS.accent, fontWeight: '800', fontSize: 13, fontFamily: MONO_FONT },
+  eyebrow: {
+    fontSize: 10,
+    fontWeight: '900',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.5,
+    color: COLORS.accent,
+  },
+  title: { fontSize: 28, fontWeight: '900', color: COLORS.textPrimary, marginTop: 6, marginBottom: 18 },
   errorBox: {
-    backgroundColor: '#FFF0F0',
-    borderColor: '#F2C6CC',
+    backgroundColor: COLORS.dangerBg,
+    borderColor: COLORS.dangerBorder,
     borderWidth: 1,
     padding: 12,
-    borderRadius: 12,
+    borderRadius: RADII.control,
     marginBottom: 14,
   },
-  errorText: { color: '#A53342', fontSize: 13, fontWeight: '700' },
+  errorText: { color: COLORS.dangerText, fontSize: 13, fontWeight: '700' },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADII.card,
     padding: 18,
     borderWidth: 1,
-    borderColor: '#E4EAF2',
+    borderColor: COLORS.border,
   },
-  label: { fontSize: 11, fontWeight: '900', letterSpacing: 1, color: '#384E6D', marginBottom: 8 },
+  label: {
+    fontSize: 10,
+    fontWeight: '800',
+    fontFamily: MONO_FONT,
+    letterSpacing: 1.2,
+    color: COLORS.textSecondary,
+    marginBottom: 8,
+  },
   spacing: { marginTop: 14 },
   input: {
-    backgroundColor: '#F9FBFD',
+    backgroundColor: COLORS.inputBg,
     borderWidth: 1,
-    borderColor: '#DCE4F0',
-    borderRadius: 12,
+    borderColor: COLORS.borderStrong,
+    borderRadius: RADII.control,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 14,
-    color: '#172743',
+    color: COLORS.textPrimary,
     minHeight: 46,
   },
+  inputFocused: { borderColor: COLORS.accent },
   textArea: { minHeight: 96, textAlignVertical: 'top' },
   priorityRow: { flexDirection: 'row', gap: 8 },
   priorityPill: {
     flex: 1,
     minHeight: 44,
-    borderRadius: 10,
-    backgroundColor: '#EDF2F7',
+    borderRadius: RADII.control,
+    backgroundColor: COLORS.surfaceAlt,
+    borderWidth: 1,
+    borderColor: COLORS.borderStrong,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  priorityActive: { backgroundColor: '#172743' },
-  priorityText: { fontSize: 13, fontWeight: '800', color: '#4B5A75' },
-  priorityTextActive: { color: '#FFFFFF' },
+  priorityActive: { backgroundColor: COLORS.accent, borderColor: COLORS.accent },
+  priorityText: { fontSize: 13, fontWeight: '800', color: COLORS.textSecondary },
+  priorityTextActive: { color: COLORS.accentDarkInk, fontWeight: '900' },
   saveButton: {
-    backgroundColor: '#147D73',
-    borderRadius: 12,
+    backgroundColor: COLORS.accent,
+    borderRadius: RADII.control,
     minHeight: 48,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 20,
   },
   buttonDisabled: { opacity: 0.65 },
-  saveButtonText: { color: '#FFFFFF', fontWeight: '900', fontSize: 15 },
+  saveButtonText: { color: COLORS.accentDarkInk, fontWeight: '900', fontSize: 15 },
 });
