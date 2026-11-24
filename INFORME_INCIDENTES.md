@@ -1,7 +1,7 @@
 # Informe de incidencias · Gestor de tareas
 
-**Estudiante:** Santiago (`santiago99-mora` — completar nombre y apellido)  
-**Fecha:** 23/11/2026 (en progreso)  
+**Estudiante:** Santiago Mora (`santiago99-mora`)  
+**Fecha:** 24/11/2026 (entrega final)  
 **Proyecto / rama Git:** `gestor-tareas-debugging` · `https://github.com/santiago99-mora/gestor_tareas.git` · rama `main` (base `73ec2d9`, deps `890aaed`)  
 **Entorno (Expo SDK, Android, dispositivo):** Expo SDK `~57.0.0` (`expo@57.0.33`, React Native `0.86.3`, React `19.2.3`), Node `v24.21.0`, dispositivo físico Android con Expo Go  
 
